@@ -83,8 +83,9 @@ paths:
               properties:
                 mediaId:
                   type: string
-                  format: uuid
+                  format: int64
                   description: Unique media identifier.
+                  example: 100              
                 playbackStartTime:
                   type: string
                   format: date-time
