@@ -129,12 +129,10 @@ def process_messages():
         logger.info("Message: %s", msg)
         payload = msg["payload"]
         if msg["type"] == "mediaupload": # Change this to your event type
+            # Store the event1 (i.e., the payload) to the DB
             media_upload(payload)
         elif msg["type"] == "mediaplayback": # Change this to your event type
             # Store the event2 (i.e., the payload) to the DB
-            original_datetime = payload['playbackStartTime']
-            adjusted_datetime = datetime.datetime.strptime(original_datetime, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%d %H:%M:%S')
-            payload['playbackStartTime'] = adjusted_datetime
             media_playback(payload)
         
         # Commit the new message as being read
@@ -156,4 +154,4 @@ if __name__ == "__main__":
     t1 = Thread(target=process_messages)
     t1.setDaemon(True)
     t1.start()
-    app.run(port=8090, host="0.0.0.0")
+    app.run(port=8090, port='0.0.0.0')
