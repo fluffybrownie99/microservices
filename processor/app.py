@@ -8,12 +8,12 @@ from base import Base
 from server_stats import ServerStats
 
 
-# #loading log conf
-# with open('log_conf.yaml', 'r') as f:
-#     log_config = yaml.safe_load(f.read())
-#     logging.config.dictConfig(log_config)
+#loading log conf
+with open('log_conf.yaml', 'r') as f:
+    log_config = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_config)
     
-# logger = logging.getLogger('basicLogger')
+logger = logging.getLogger('basicLogger')
 
 
 #Receiver DB Setup for credentials (Load info from app_conf.yml, add as dict, access values)
@@ -29,7 +29,7 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 # GET Handler
 def get_stats():
-    # logger.info("Request for statistics has started")
+    logger.info("Request for statistics has started")
     session = DB_SESSION()
     current_stats = session.query(ServerStats).order_by(ServerStats.last_updated.desc()).first()
     if current_stats:
@@ -40,19 +40,19 @@ def get_stats():
             "largest_file_id":current_stats.largest_file_id,
             "last_updated":current_stats.last_updated.strftime('%Y-%m-%d %H:%M:%S')
         }]
-        # logger.debug("Current statistics: %s", stats_dict)
-        # logger.info("Request for statistics has completed")
+        logger.debug("Current statistics: %s", stats_dict)
+        logger.info("Request for statistics has completed")
         session.close()
         return stats_dict, 200
     else:
-        # logger.error("Statistics do not exist")
-        # logger.info("Request for statistics has completed")
+        logger.error("Statistics do not exist")
+        logger.info("Request for statistics has completed")
         session.close()
         return "Statistics do not exist", 404
 
 def populate_stats():
     """ Periodically update stats """
-    # logger.info("Start Periodic Processing")
+    logger.info("Start Periodic Processing")
     session = DB_SESSION()
     # query for last_updated time
     current_stats = session.query(ServerStats).order_by(ServerStats.last_updated.desc()).first()
@@ -70,19 +70,19 @@ def populate_stats():
     playback_response_data = playback_response.json()
 
     if upload_response_data == [] and playback_response_data == []:
-        # logger.info(f'No new events, last update at {last_updated}, current time is {current_datetime_formatted}')
+        logger.info(f'No new events, last update at {last_updated}, current time is {current_datetime_formatted}')
         session.close()
         return
     elif upload_response.status_code != 200 or playback_response.status_code != 200:
-        # logger.error(f"Received Status code {upload_response.status_code} and {playback_response.status_code}")
+        logger.error(f"Received Status code {upload_response.status_code} and {playback_response.status_code}")
         session.close()
     else:
         total_uploads = len(upload_response_data)
         total_playbacks = len(playback_response_data)
-        # logger.info(f"Received {total_uploads} Upload Events and {total_playbacks} Playback Events")
+        logger.info(f"Received {total_uploads} Upload Events and {total_playbacks} Playback Events")
         # Caluclate updated statistics
         for upload in upload_response_data:
-            # logger.debug(f'Now processing {upload["trace_id"]}')
+            logger.debug(f'Now processing {upload["trace_id"]}')
             print(f'Now processing {upload["trace_id"]}')
         if upload_response_data:
             largest_file = max(upload_response_data, key=lambda x: x['fileSize'])
@@ -91,7 +91,7 @@ def populate_stats():
             largest_file_id = None
         playback_counts = {}
         for playback in playback_response_data:
-            # logger.debug(f"Now processing Playback event {playback['trace_id']}")
+            logger.debug(f"Now processing Playback event {playback['trace_id']}")
             media_id = playback['mediaId']
             if media_id not in playback_counts:
                 playback_counts[media_id] = 1
@@ -113,7 +113,7 @@ def populate_stats():
     )
     session.add(new_stats)
     session.commit()
-    # logger.debug(f'New Values: {total_playbacks, total_uploads, most_accessed_file_id, largest_file_id,last_updated}')
+    logger.debug(f'New Values: {total_playbacks, total_uploads, most_accessed_file_id, largest_file_id,last_updated}')
     session.close()
 
 
