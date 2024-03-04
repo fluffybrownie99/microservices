@@ -1,0 +1,135 @@
+openapi: 3.0.0
+info:
+  description: This API provides audit info for Kafka service
+  version: "1.0.0"
+  title: Local Media Server Audit API
+  contact:
+    email: rrajan19@my.bcit.ca
+paths:
+  /home/media/upload:
+    get:
+      summary: get media upload
+      operationId: app.get_media_upload
+      description: get media upload events 
+      parameters:
+        - name: index
+          in: query
+          description: Gets the media upload at the index in the event store
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned a media upload event
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mediaType:
+                    type: string
+                    enum: [photo, video]
+                  fileSize:
+                    type: integer
+                    format: int32
+                    description: Size of the file in bytes.
+                  uploadTimestamp:
+                    type: string
+                    format: date-time
+                  userID:
+                    type: string
+                    format: uuid
+                    description: Unique user identifier.
+                    example: "123e4567-e89b-12d3-a456-426614174000"
+                  trace_id:
+                    type: string
+                    format: uuid
+                    description: Unique user identifier.
+                    example: "123e4567-e89b-12d3-a456-426614174000"
+
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /home/media/playback:
+    get:
+      summary: Get a media playback event
+      operationId: app.get_media_playback
+      description: Get a media playback event from kafka
+      parameters:
+        - name: index
+          in: query
+          description: Gets the media playback log at the index in the event store
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned a media playback event
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mediaId:
+                    type: string
+                    format: uuid
+                    description: Unique media identifier.
+                  playbackStartTime:
+                    type: string
+                    format: date-time
+                    example: "2024-01-24T10:00:00Z"
+                  userID:
+                    type: string
+                    format: uuid
+                    description: Unique user identifier.
+                    example: "123e4567-e89b-12d3-a456-426614174000"
+                  playbackId:
+                    type: integer
+                    format: int64
+                    description: Identifier for each playback event (in case multiple users accessing the same media)
+                    example: 101
+                  playbackDuration:
+                    type: integer
+                    format: int32
+                    description: Duration of the playback in seconds.
+                    example: 3600
+                  trace_id:
+                    type: string
+                    format: uuid
+                    description: Unique user identifier.
+                    example: "123e4567-e89b-12d3-a456-426614174000"
+
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string

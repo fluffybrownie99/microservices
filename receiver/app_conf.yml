@@ -1,0 +1,9 @@
+version: 1
+eventstore1:
+  url: http://localhost:8090/home/media/upload/
+eventstore2:
+  url: http://localhost:8090/home/media/playback/
+events:
+  hostname: acit3855audit.westus3.cloudapp.azure.com
+  port: 9092
+  topic: events

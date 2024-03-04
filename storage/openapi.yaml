@@ -1,0 +1,243 @@
+openapi: 3.0.0
+info:
+  description: API that handles media uploads and playbacks on a home media server. Meant to interact with a locally-hosted front-end web app.
+  version: "1.0.0"
+  title: Local Media Server Storage API
+  contact:
+    email: rrajan19@my.bcit.ca
+tags:
+  - name: HomeServer
+    description: Operations available for home media server.
+paths:
+  /home/media/upload:
+    # post:
+    #   tags:
+    #     - HomeServer
+    #   summary: Adds a media upload
+    #   operationId: app.media_upload
+    #   description: Adds a new media upload (photo or video) with metadata to the server.
+    #   responses:
+    #     '201':
+    #       description: Media successfully uploaded
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               mediaId:
+    #                 type: string
+    #                 format: uuid
+    #                 description: Unique identifier for uploaded media.
+    #     '400':
+    #       description: Invalid input, object invalid
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       multipart/form-data:
+    #         schema:
+    #           type: object
+    #           properties:
+    #             file:
+    #               type: string
+    #               format: binary
+    #               description: Binary data of the media file uploaded.
+    #             mediaType:
+    #               type: string
+    #               enum: [photo, video]
+    #             fileSize:
+    #               type: integer
+    #               format: int32
+    #               description: Size of the file in bytes.
+    #             uploadTimestamp:
+    #               type: string
+    #               format: date-time
+    #             userID:
+    #               type: string
+    #               format: uuid
+    #               description: Unique user identifier.
+    #               example: "123e4567-e89b-12d3-a456-426614174000"
+    #             trace_id:
+    #               type: string
+    #               format: uuid
+    #               description: Unique user identifier.
+    #               example: "123e4567-e89b-12d3-a456-426614174000"
+    get:
+      tags:
+        - HomeServer
+      summary: Gets new media upload data
+      operationId: app.get_media_upload_events
+      description: Gets Media Upload data that has been added to the server after a timestamp
+      parameters:
+        - name: start_timestamp
+          in: query
+          description: Limits the number of upload events returned
+          schema:
+            type: string
+            format: date-time
+            example: 2016-08-29T09:12:33.001Z
+        - name: end_timestamp
+          in: query
+          description: Limits the number of upload events returned
+          schema:
+            type: string
+            format: date-time
+            example: 2016-08-29T09:12:33.001Z
+      responses:
+        '200':
+          description: Successfully returned a list of media upload events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    mediaType:
+                      type: string
+                      enum: [photo, video]
+                    fileSize:
+                      type: integer
+                      format: int32
+                      description: Size of the file in bytes.
+                    uploadTimestamp:
+                      type: string
+                      format: date-time
+                    userID:
+                      type: string
+                      format: uuid
+                      description: Unique user identifier.
+                      example: "123e4567-e89b-12d3-a456-426614174000"
+                    trace_id:
+                      type: string
+                      format: uuid
+                      description: Unique user identifier.
+                      example: "123e4567-e89b-12d3-a456-426614174000"
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
+
+
+  /home/media/playback:
+    # post:
+    #   tags:
+    #     - HomeServer
+    #   summary: Record media playback
+    #   operationId: app.media_playback
+    #   description: Tracks playback details of media files
+    #   responses:
+    #     '200':
+    #       description: Playback data successfully recorded
+    #     '400':
+    #       description: Invalid input
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           type: object
+    #           properties:
+    #             mediaId:
+    #               type: string
+    #               format: uuid
+    #               description: Unique media identifier.
+    #             playbackStartTime:
+    #               type: string
+    #               format: date-time
+    #               example: "2024-01-24T10:00:00Z"
+    #             userID:
+    #               type: string
+    #               format: uuid
+    #               description: Unique user identifier.
+    #               example: "123e4567-e89b-12d3-a456-426614174000"
+    #             playbackId:
+    #               type: integer
+    #               format: int64
+    #               description: Identifier for each playback event (in case multiple users accessing the same media)
+    #               example: 101
+    #             playbackDuration:
+    #               type: integer
+    #               format: int32
+    #               description: Duration of the playback in seconds.
+    #               example: 3600
+    #             trace_id:
+    #               type: string
+    #               format: uuid
+    #               description: Unique user identifier.
+    #               example: "123e4567-e89b-12d3-a456-426614174000"
+    get:
+      tags:
+        - devices
+      summary: gets new media playback events
+      operationId: app.get_media_playback_events
+      description: Gets media playback events added after a timestamp
+      parameters:
+        - name: start_timestamp
+          in: query
+          description: Limits the number of readings returned
+          schema:
+            type: string
+            format: date-time
+            example: 2016-08-29T09:12:33.001Z
+        - name: end_timestamp
+          in: query
+          description: Limits the number of readings returned
+          schema:
+            type: string
+            format: date-time
+            example: 2016-08-29T09:12:33.001Z
+      responses:
+        '200':
+          description: Successfully returned a list of media upload events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    mediaId:
+                      type: string
+                      format: uuid
+                      description: Unique media identifier.
+                    playbackStartTime:
+                      type: string
+                      format: date-time
+                      example: "2024-01-24T10:00:00Z"
+                    userID:
+                      type: string
+                      format: uuid
+                      description: Unique user identifier.
+                      example: "123e4567-e89b-12d3-a456-426614174000"
+                    playbackId:
+                      type: integer
+                      format: int64
+                      description: Identifier for each playback event (in case multiple users accessing the same media)
+                      example: 101
+                    playbackDuration:
+                      type: integer
+                      format: int32
+                      description: Duration of the playback in seconds.
+                      example: 3600
+                    trace_id:
+                      type: string
+                      format: uuid
+                      description: Unique user identifier.
+                      example: "123e4567-e89b-12d3-a456-426614174000"
+                      
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string

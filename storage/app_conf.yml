@@ -1,0 +1,11 @@
+version: 1
+datastore:
+  user: ram
+  password: Password
+  hostname: acit3855audit.westus3.cloudapp.azure.com
+  port: 3306
+  db: arch
+events:
+  hostname: acit3855audit.westus3.cloudapp.azure.com
+  port: 9092
+  topic: events
