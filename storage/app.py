@@ -35,7 +35,8 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def media_upload(body):
     #this makes sure time is properly formatted for the database.
-    upload_timestamp = datetime.datetime.strptime(body['uploadTimestamp'], '%Y-%m-%d %H:%M:%S')
+    #upload_timestamp = datetime.datetime.strptime(body['uploadTimestamp'], '%Y-%m-%d %H:%M:%S')
+    upload_timestamp = datetime.datetime.strptime(body['uploadTimestamp'], '%Y-%m-%dT%H:%M:%SZ')
     session = DB_SESSION()
     new_upload = MediaUpload(
         fileSize=body['fileSize'],
@@ -57,7 +58,8 @@ def media_upload(body):
 
 def media_playback(body):
     session = DB_SESSION()
-    playback_start_time = datetime.datetime.strptime(body['playbackStartTime'], '%Y-%m-%d %H:%M:%S')
+    #playback_start_time = datetime.datetime.strptime(body['playbackStartTime'], '%Y-%m-%d %H:%M:%S')
+    playback_start_time = datetime.datetime.strptime(body['playbackStartTime'], '%Y-%m-%dT%H:%M:%SZ')
     new_playback = MediaPlayback(
         mediaId=body['mediaId'],
         playbackStartTime=playback_start_time,
@@ -80,8 +82,8 @@ def media_playback(body):
 def get_media_upload_events(start_timestamp, end_timestamp):
     """ Gets new media upload readings between the start and end timestamps """
     session = DB_SESSION()
-    start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, '%Y-%m-%d %H:%M:%S')
-    end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, '%Y-%m-%d %H:%M:%S')
+    start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, '%Y-%m-%dT%H:%M:%SZ')
+    end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, '%Y-%m-%dT%H:%M:%SZ')
     # Filter results by start time and end time
     results = session.query(MediaUpload).filter(
     and_(MediaUpload.date_created >= start_timestamp_datetime,
@@ -97,8 +99,8 @@ def get_media_upload_events(start_timestamp, end_timestamp):
 def get_media_playback_events(start_timestamp, end_timestamp):
     """ Gets new media playback readings between the start and end timestamps """
     session = DB_SESSION()
-    start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, '%Y-%m-%d %H:%M:%S')
-    end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, '%Y-%m-%d %H:%M:%S')
+    start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, '%Y-%m-%dT%H:%M:%SZ')
+    end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, '%Y-%m-%dT%H:%M:%SZ')
     # Filter results by start time and end time
     results = session.query(MediaPlayback).filter(
     and_(MediaPlayback.date_created >= start_timestamp_datetime,
