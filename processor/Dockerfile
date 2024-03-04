@@ -8,4 +8,5 @@ WORKDIR /app
 RUN pip3 install -r requirements.txt
 COPY . /app
 ENTRYPOINT [ "python3" ]
-CMD [ "app.py" ]
+# CMD [ "app.py" ]
+CMD ["/bin/bash", "-c", "echo create_database.py;echo app.py"]
