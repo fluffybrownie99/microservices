@@ -26,6 +26,7 @@ docker run -d -p 8100:8100 --network="host" processing:latest
 ```bash
 cd ../audit
 docker build -t audit_log:latest .
+docker run -d -p 8110:8110 audit_log:latest
 ```
 
  docker build --pull --no-cache -t processor:latest .

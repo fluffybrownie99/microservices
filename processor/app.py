@@ -64,8 +64,8 @@ def populate_stats():
     current_datetime = datetime.datetime.now()
     current_datetime_formatted = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
     
-    upload_response = requests.get(app_config['eventstore']['url']+'/home/media/upload', params={'start_timestamp': last_updated, 'end_timestamp': current_datetime_formatted})
-    playback_response = requests.get(app_config['eventstore']['url']+'/home/media/playback', params={'start_timestamp': last_updated, 'end_timestamp': current_datetime_formatted})
+    upload_response = requests.get(app_config['eventstore']['url']+'home/media/upload', params={'start_timestamp': last_updated, 'end_timestamp': current_datetime_formatted})
+    playback_response = requests.get(app_config['eventstore']['url']+'home/media/playback', params={'start_timestamp': last_updated, 'end_timestamp': current_datetime_formatted})
     upload_response_data = upload_response.json()
     playback_response_data = playback_response.json()
 
