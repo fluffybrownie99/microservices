@@ -6,9 +6,9 @@ docker-compose up -d
 ```
 
 ```bash
-cd receiver
+cd ../receiver
 docker build -t receiver:latest .
-docker run -d -p 8080:8080 receiver
+docker run -d -p 8080:8080 receiver:latest
 ```
 
 ```bash
@@ -20,13 +20,12 @@ docker run -d -p 8090:8090 storage
 ```bash
 cd ../processor
 docker build -t processing:latest .
-docker run -d -p 8100:8100 --network="host" processing
+docker run -d -p 8100:8100 --network="host" processing:latest
 ```
 
 ```bash
 cd ../audit
 docker build -t audit_log:latest .
-docker run -d -p 8110:8110 audit_log
 ```
 
  docker build --pull --no-cache -t processor:latest .
