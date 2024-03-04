@@ -59,7 +59,7 @@ docker run -d -p 8110:8110 audit_log:latest
  # Prep for compose
 
  ```bash
- cd ./kafkamysqldocker
+cd ./kafkamysqldocker
 docker-compose up -d
 
 cd ../receiver

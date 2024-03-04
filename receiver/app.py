@@ -3,9 +3,9 @@ from update_event_data import update_event_data
 from pykafka import KafkaClient
 import connexion, requests, yaml, logging, logging.config, datetime, json, uuid
 #Log loader
-# with open('log_conf.yml', 'r') as f:
-#     log_config = yaml.safe_load(f.read())
-#     logging.config.dictConfig(log_config)
+with open('log_conf.yml', 'r') as f:
+    log_config = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
 # URLs from YAML
