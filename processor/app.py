@@ -163,4 +163,4 @@ app.add_api("openapi.yaml",
 if __name__ == "__main__":
     create_database()
     init_scheduler()
-    app.run(port=8100)
+    app.run(port=8100, host='0.0.0.0')
