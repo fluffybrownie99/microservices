@@ -54,3 +54,26 @@ docker build -t audit_log:latest .
 docker run -d -p 8110:8110 audit_log:latest
 
  ```
+
+
+ # Prep for compose
+
+ ```bash
+ cd ./kafkamysqldocker
+docker-compose up -d
+
+cd ../receiver
+docker build -t receiver:latest .
+
+cd ../storage
+docker build -t storage:latest .
+
+cd ../processor
+docker build -t processing:latest .
+
+cd ../audit
+docker build -t audit_log:latest .
+
+
+ 
+ ```
