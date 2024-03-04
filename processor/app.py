@@ -1,4 +1,4 @@
-import connexion, datetime, json, yaml, logging, logging.config, requests
+import connexion, datetime, json, yaml, logging, logging.config, requests, pytz
 from connexion import NoContent
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
@@ -119,13 +119,15 @@ def populate_stats():
 
 
 def init_scheduler():
-    sched = BackgroundScheduler(daemon=True)
-    sched.add_job(populate_stats,
-                'interval',
-                seconds=app_config['scheduler']['period_sec'])
+    timezone = pytz.timezone('America/Vancouver') 
+    sched = BackgroundScheduler(timezone=timezone, daemon=True)
+    sched.add_job(
+        populate_stats,
+        'interval',
+        seconds=app_config['scheduler']['period_sec'],
+        # timezone=timezone  # Add this line if your APScheduler version supports it
+    )
     sched.start()
-
-
 
 # Connexion and Flask stuff
 app = connexion.FlaskApp(__name__, specification_dir='')
