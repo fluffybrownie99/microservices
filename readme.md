@@ -1,3 +1,14 @@
+# Microservices Project for a Home Server setup
+
+The goal of this project is to be a myriad of containerized microservices to run on a local media server using RESTful APIs for media uploads and media retrieval (or playbacks)
+- **Audit**: Provides two endpoints for retrieving media upload and media playback information through our Kafka Client
+- **Kafka/Mysql**: Provides a single container for Kafka, Zookeeper. and our MySQL database.
+- **Receiver**: The primary endpoints that we will interact with, which will communicate with our other endpoints privately.
+- **Storage**: Provides a container that handles storing and retrieving data regarding server media to the MySQL database using messages.
+- **Processor**: Retrieves data from the Storage Service and processes basic statistics.
+ 
+
+
 # Docker commands
 
 ```bash
