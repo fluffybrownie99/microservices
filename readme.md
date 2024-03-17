@@ -6,8 +6,7 @@ The goal of this project is to be a myriad of containerized microservices to run
 - **Receiver**: The primary endpoints that we will interact with, which will communicate with our other endpoints privately.
 - **Storage**: Provides a container that handles storing and retrieving data regarding server media to the MySQL database using messages.
 - **Processor**: Retrieves data from the Storage Service and processes basic statistics.
-
-about media uplaods and media retrieval (or playbacks).   
+ 
 
 
 # Docker commands
