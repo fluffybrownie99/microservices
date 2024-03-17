@@ -76,7 +76,7 @@ services:
     ports:
     - "8888:80"
     depends_on:
-    - "processing"
+    - "processor"
     - "audit_log"
   
 # Names our volume
