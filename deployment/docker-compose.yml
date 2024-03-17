@@ -71,6 +71,14 @@ services:
       - "8110:8110"
     depends_on:
       - kafka
+  dashboard:
+    build: dashboard
+    ports:
+    - "8888:80"
+    depends_on:
+    - "processing"
+    - "audit_log"
+  
 # Names our volume
 volumes:
   my-db:

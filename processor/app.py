@@ -1,4 +1,4 @@
-import connexion, datetime, json, yaml, logging, logging.config, requests, pytz
+import connexion, datetime, json, yaml, logging, logging.config, requests, pytz, sqlite3
 from connexion import NoContent
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
@@ -6,8 +6,8 @@ from operator import and_
 from apscheduler.schedulers.background import BackgroundScheduler
 from base import Base
 from server_stats import ServerStats
-import sqlite3
-
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
 
 #loading log conf
 with open('log_conf.yaml', 'r') as f:
@@ -154,6 +154,14 @@ app.add_api("openapi.yaml",
             strict_validation=True,
             validate_responses=True)
 
+app.add_middleware(
+    CORSMiddleware,
+    position=MiddlewarePosition.BEFORE_EXCEPTION,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 #openapi.yaml is the name of the file
 # strict_validation - whether to validate requests parameters or messages
