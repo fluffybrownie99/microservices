@@ -28,22 +28,6 @@ DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
-def create_database():
-    conn = sqlite3.connect('stats.sqlite')
-    
-    c = conn.cursor()
-    c.execute(
-        '''
-        CREATE TABLE ServerStats (
-        id INTEGER PRIMARY KEY,
-        total_uploads INTEGER,
-        total_playbacks INTEGER,
-        most_accessed_file_id INTEGER,
-        largest_file_id INTEGER,
-        last_updated DATETIME);
-        '''
-    )
-    
 # GET Handler
 def get_stats():
     logger.info("Request for statistics has started")
@@ -100,7 +84,7 @@ def populate_stats():
         # Caluclate updated statistics
         for upload in upload_response_data:
             logger.debug(f'Now processing {upload["trace_id"]}')
-            pass
+            print(f'Now processing {upload["trace_id"]}')
         if upload_response_data:
             largest_file = max(upload_response_data, key=lambda x: x['fileSize'])
             largest_file_id = largest_file['id']
@@ -169,6 +153,5 @@ app.add_middleware(
 
 
 if __name__ == "__main__":
-    create_database()
     init_scheduler()
-    app.run(port=8100)
+    app.run(port=8100, host='0.0.0.0')
