@@ -1,4 +1,4 @@
-const STATS_API_URL = "http://acit3855audit.westus3.cloudapp.azure.com:8100/home/server/stats";
+const STATS_API_URL = "http://acit3855audit.westus3.cloudapp.azure.com:8100/home/media/stats";
 const EVENTS_URL = {
     uploads: "http://acit3855audit.westus3.cloudapp.azure.com:8110/home/media/uploads",
     playbacks: "http://acit3855audit.westus3.cloudapp.azure.com:8110/home/media/playbacks"
