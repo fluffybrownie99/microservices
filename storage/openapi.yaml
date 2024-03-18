@@ -74,14 +74,14 @@ paths:
           schema:
             type: string
             format: date-time
-            example: 2016-08-29T09:12:33.001Z
+            example: 2016-08-29 09:12:33
         - name: end_timestamp
           in: query
           description: Limits the number of upload events returned
           schema:
             type: string
             format: date-time
-            example: 2016-08-29T09:12:33.001Z
+            example: 2016-08-29 09:12:33
       responses:
         '200':
           description: Successfully returned a list of media upload events
@@ -185,14 +185,14 @@ paths:
           schema:
             type: string
             format: date-time
-            example: 2016-08-29T09:12:33.001Z
+            example: 2016-08-29 09:12:33
         - name: end_timestamp
           in: query
           description: Limits the number of readings returned
           schema:
             type: string
             format: date-time
-            example: 2016-08-29T09:12:33.001Z
+            example: 2016-08-29 09:12:33
       responses:
         '200':
           description: Successfully returned a list of media upload events
@@ -205,8 +205,9 @@ paths:
                   properties:
                     mediaId:
                       type: string
-                      format: uuid
+                      format: int64
                       description: Unique media identifier.
+                      example: 100
                     playbackStartTime:
                       type: string
                       format: date-time

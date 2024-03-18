@@ -1,4 +1,4 @@
-import connexion, datetime, json, yaml, logging, logging.config, requests, pytz
+import connexion, datetime, json, yaml, logging, logging.config, requests, pytz, sqlite3
 from connexion import NoContent
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
@@ -6,7 +6,8 @@ from operator import and_
 from apscheduler.schedulers.background import BackgroundScheduler
 from base import Base
 from server_stats import ServerStats
-
+from starlette.middleware.cors import CORSMiddleware
+from flask_cors import CORS
 
 #loading log conf
 with open('log_conf.yaml', 'r') as f:
@@ -64,8 +65,8 @@ def populate_stats():
     current_datetime = datetime.datetime.now()
     current_datetime_formatted = current_datetime.strftime('%Y-%m-%d %H:%M:%S')
     
-    upload_response = requests.get(app_config['eventstore']['url']+'home/media/upload', params={'start_timestamp': last_updated, 'end_timestamp': current_datetime_formatted})
-    playback_response = requests.get(app_config['eventstore']['url']+'home/media/playback', params={'start_timestamp': last_updated, 'end_timestamp': current_datetime_formatted})
+    upload_response = requests.get(app_config['eventstore']['url']+'/home/media/upload', params={'start_timestamp': last_updated, 'end_timestamp': current_datetime_formatted})
+    playback_response = requests.get(app_config['eventstore']['url']+'/home/media/playback', params={'start_timestamp': last_updated, 'end_timestamp': current_datetime_formatted})
     upload_response_data = upload_response.json()
     playback_response_data = playback_response.json()
 
@@ -83,7 +84,7 @@ def populate_stats():
         # Caluclate updated statistics
         for upload in upload_response_data:
             logger.debug(f'Now processing {upload["trace_id"]}')
-            pass
+            print(f'Now processing {upload["trace_id"]}')
         if upload_response_data:
             largest_file = max(upload_response_data, key=lambda x: x['fileSize'])
             largest_file_id = largest_file['id']
@@ -133,9 +134,12 @@ def init_scheduler():
 app = connexion.FlaskApp(__name__, specification_dir='')
 #specification_dir is where to look for OpenAPI specifications. Empty string means
 #look in the current directory
+CORS(app.app)
 app.add_api("openapi.yaml",
             strict_validation=True,
             validate_responses=True)
+
+
 
 
 #openapi.yaml is the name of the file
