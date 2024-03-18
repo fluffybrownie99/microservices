@@ -10,7 +10,7 @@ const getStats = (statsUrl) => {
         .then(res => res.json())
         .then((result) => {
             console.log("Received stats", result)
-            updateStatsHTML(result);
+            updateStatsHTML(result['0']);
         }).catch((error) => {
             updateStatsHTML(error.message, error = true)
         })
@@ -30,7 +30,7 @@ const getEvent = (eventType) => {
         })
         .then((result) => {
             console.log("Received event", result)
-            updateEventHTML({...result, index: eventIndex}, eventType)
+            updateEventHTML({...result['payload'], index: eventIndex}, eventType)
         }).catch((error) => {
             updateEventHTML({error: error.message, index: eventIndex}, eventType, error = true)
         })
