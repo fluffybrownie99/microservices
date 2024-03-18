@@ -74,7 +74,7 @@ services:
   dashboard:
     image: dashboard:latest
     ports:
-    - "8888:80"
+    - "80:80"
     depends_on:
     - "processor"
     - "audit_log"
