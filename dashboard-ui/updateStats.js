@@ -86,14 +86,14 @@ const updateStatsHTML = (data, error = false) => {
 const setup = () => {
     const interval = setInterval(() => {
         getStats(STATS_API_URL)
-        getEvent("snow")
-        getEvent("lift")
+        getEvent("mediaupload")
+        getEvent("mediaplayback")
     }, 5000); // Update every 5 seconds
 
     // initial call
     getStats(STATS_API_URL)
-    getEvent("snow")
-    getEvent("lift")
+    getEvent("mediaupload")
+    getEvent("mediaplayback")
     // clearInterval(interval);
 }
 
