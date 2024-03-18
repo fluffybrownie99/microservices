@@ -78,6 +78,7 @@ app = connexion.FlaskApp(__name__, specification_dir='')
 #specification_dir is where to look for OpenAPI specifications. Empty string means
 #look in the current directory
 CORS(app.app)
+app.app.config['CORS_HEADERS'] = 'Content-Type'
 app.add_api("openapi.yml",
             strict_validation=True,
             validate_responses=True)
