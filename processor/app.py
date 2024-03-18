@@ -6,7 +6,7 @@ from operator import and_
 from apscheduler.schedulers.background import BackgroundScheduler
 from base import Base
 from server_stats import ServerStats
-# from connexion.middleware import MiddlewarePosition
+from connexion.middleware import MiddlewarePosition
 from starlette.middleware.cors import CORSMiddleware
 
 #loading log conf
