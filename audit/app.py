@@ -1,7 +1,7 @@
 import connexion, datetime, json, yaml, logging, logging.config, uuid
 from pykafka import KafkaClient
-from connexion.middleware import MiddlewarePosition
 from starlette.middleware.cors import CORSMiddleware
+from flask_cors import CORS
 
 #loading log conf
 with open('log_conf.yml', 'r') as f:
@@ -77,18 +77,12 @@ def get_media_playback(index):
 app = connexion.FlaskApp(__name__, specification_dir='')
 #specification_dir is where to look for OpenAPI specifications. Empty string means
 #look in the current directory
+CORS(app.app)
 app.add_api("openapi.yml",
             strict_validation=True,
             validate_responses=True)
             
-app.add_middleware(
-    CORSMiddleware,
-    position=MiddlewarePosition.BEFORE_EXCEPTION,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
 
 if __name__ == "__main__":
     app.run(port=8110)
