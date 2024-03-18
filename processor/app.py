@@ -6,8 +6,8 @@ from operator import and_
 from apscheduler.schedulers.background import BackgroundScheduler
 from base import Base
 from server_stats import ServerStats
-from connexion import ConnexionMiddleware
 from starlette.middleware.cors import CORSMiddleware
+from flask_cors import CORS
 
 #loading log conf
 with open('log_conf.yaml', 'r') as f:
@@ -132,21 +132,15 @@ def init_scheduler():
 
 # Connexion and Flask stuff
 app = connexion.FlaskApp(__name__, specification_dir='')
-app = ConnexionMiddleware(app)
 #specification_dir is where to look for OpenAPI specifications. Empty string means
 #look in the current directory
+CORS(app.app)
 app.add_api("openapi.yaml",
             strict_validation=True,
             validate_responses=True)
 
-app.add_middleware(
-    CORSMiddleware,
-    position=MiddlewarePosition.BEFORE_EXCEPTION,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+
 
 #openapi.yaml is the name of the file
 # strict_validation - whether to validate requests parameters or messages
