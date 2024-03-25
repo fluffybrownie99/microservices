@@ -19,7 +19,6 @@ with open('app_conf.yml', 'r') as f:
 # kafka_producer = None
 
 def initialize_kafka_producer():
-    global kafka_producer
     kafka_config = app_config['events']
     retry_count = 0
     max_retries = kafka_config['max_retries']
@@ -46,7 +45,7 @@ client, topic, kafka_producer = initialize_kafka_producer()
 
 def media_upload(body):
     # update_event_data("media_upload",body)
-    # global kafka_producer
+
     if kafka_producer is None:
         logger.error("Kafka producer is not initialized.")
     # Handle the error appropriately, possibly by returning an error response
