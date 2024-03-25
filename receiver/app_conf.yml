@@ -7,3 +7,5 @@ events:
   hostname: acit3855audit.westus3.cloudapp.azure.com
   port: 9092
   topic: events
+  max_retries: 10
+  retry_sleep_duration: 100
