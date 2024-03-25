@@ -35,7 +35,10 @@ retry_sleep_duration = kafka_config['retry_sleep_duration']
 
 # DB Connection
 logger.info(f"Connecting to DB. Hostname:{db_hostname}, Port:{db_port}")
-DB_ENGINE = create_engine(f'mysql+pymysql://{db_user}:{db_password}@{db_hostname}:{db_port}/{db_name}')
+DB_ENGINE = create_engine(f'mysql+pymysql://{db_user}:{db_password}@{db_hostname}:{db_port}/{db_name}',     
+    pool_size=10,
+    pool_recycle=300, # recycles the connection after 5 minutes
+    pool_pre_ping=True) # Makes sure connections are alive
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
