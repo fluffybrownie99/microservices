@@ -114,5 +114,5 @@ app.add_api("openapi.yaml",
 
 
 if __name__ == "__main__":
-    client, topic, kafka_producer = initialize_kafka_producer()
+    # client, topic, kafka_producer = initialize_kafka_producer()
     app.run(port=8080)
