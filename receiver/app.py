@@ -15,8 +15,8 @@ with open('app_conf.yml', 'r') as f:
     log_playback = app_config.get('eventstore2', {}).get('url')
     
 
-# Kafka stuff
-kafka_producer = None
+# # Kafka stuff
+# kafka_producer = None
 
 def initialize_kafka_producer():
     global kafka_producer
@@ -32,7 +32,7 @@ def initialize_kafka_producer():
             topic = client.topics[str.encode(kafka_config['topic'])]
             kafka_producer = topic.get_sync_producer()
             logger.info("Successfully connected to Kafka")
-            break
+            return client, topic, kafka_producer
         except Exception as e:
             logger.error(f"Failed to connect to Kafka: {e}")
             retry_count += 1
@@ -40,13 +40,13 @@ def initialize_kafka_producer():
     if kafka_producer is None:
         raise Exception("Failed to connect to Kafka after maximum retries")
 
-
+client, topic, kafka_producer = initialize_kafka_producer()
 # EndPoints
 
 
 def media_upload(body):
     # update_event_data("media_upload",body)
-    global kafka_producer
+    # global kafka_producer
     if kafka_producer is None:
         logger.error("Kafka producer is not initialized.")
     # Handle the error appropriately, possibly by returning an error response
@@ -76,7 +76,7 @@ def media_upload(body):
 
 def media_playback(body):
     # print(f'{body[mediaType]} \n{body[fileSize]} \n{body[uploadTime]} \n')
-    global kafka_producer
+    # global kafka_producer
     if kafka_producer is None:
         logger.error("Kafka producer is not initialized.")
     # Handle the error appropriately, possibly by returning an error response
@@ -115,5 +115,5 @@ app.add_api("openapi.yaml",
 
 
 if __name__ == "__main__":
-    initialize_kafka_producer()
+    client, topic, kafka_producer = initialize_kafka_producer()
     app.run(port=8080)
