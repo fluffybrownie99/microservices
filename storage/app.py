@@ -1,4 +1,4 @@
-import connexion, datetime, json, yaml, logging, logging.config
+import connexion, datetime, json, yaml, logging, logging.config, time
 from connexion import NoContent
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -27,6 +27,12 @@ db_password = db_config['password']
 db_hostname = db_config['hostname']
 db_port = db_config.get('port', 3306)  # Provide a default port if not specified
 db_name = db_config['db']
+
+# Kafka configuration for retry logic
+kafka_config = app_config['kafka']
+max_retries = kafka_config['max_retries']
+retry_sleep_duration = kafka_config['retry_sleep_duration']
+
 # DB Connection
 logger.info(f"Connecting to DB. Hostname:{db_hostname}, Port:{db_port}")
 DB_ENGINE = create_engine(f'mysql+pymysql://{db_user}:{db_password}@{db_hostname}:{db_port}/{db_name}')
@@ -109,17 +115,35 @@ def get_media_playback_events(start_timestamp, end_timestamp):
     session.close()
     logger.info("Query for Media Playbacks after %s returns %d results" % (start_timestamp, len(results_list)))
     return results_list, 200
+
+def create_kafka_client():
+    retry_count = 0
+    hostname = f"{app_config['events']['hostname']}:{app_config['events']['port']}"
+    while retry_count < max_retries:
+        try:
+            logging.info(f"Attempting to connect to Kafka, retry {retry_count}")
+            client = KafkaClient(hosts=hostname)
+            topic = client.topics[str.encode(app_config["events"]["topic"])]
+            return client, topic
+        except Exception as e:
+            logging.error(f"Failed to connect to Kafka: {e}")
+            time.sleep(retry_sleep_duration)
+            retry_count += 1
+    raise Exception("Failed to connect to Kafka after maximum retries")
+
+
 # Kafka Process
 def process_messages():
     """ Process event messages """
-    hostname = f"{app_config['events']['hostname']}:{app_config['events']['port']}"
-    client = KafkaClient(hosts=hostname)
-    topic = client.topics[str.encode(app_config["events"]["topic"])]
+    kafka_client, kafka_topic = create_kafka_client()    
+    # hostname = f"{app_config['events']['hostname']}:{app_config['events']['port']}"
+    # client = KafkaClient(hosts=hostname)
+    # topic = kafka_client.topics[str.encode(app_config["events"]["topic"])]
 
     # Create a consume on a consumer group, that only reads new messages
     # (uncommitted messages) when the service re-starts (i.e., it doesn't
     # read all the old messages from the history in the message queue).
-    consumer = topic.get_simple_consumer(consumer_group=b'event_group', 
+    consumer = kafka_topic.get_simple_consumer(consumer_group=b'event_group', 
                                         reset_offset_on_start=False, 
                                         auto_offset_reset=OffsetType.LATEST)
     # This is blocking - it will wait for a new message
