@@ -1,17 +1,31 @@
-import connexion, datetime, json, yaml, logging, logging.config, uuid
+import connexion, datetime, json, yaml, logging, logging.config, uuid, os
 from pykafka import KafkaClient
 from starlette.middleware.cors import CORSMiddleware
 from flask_cors import CORS
 
-#loading log conf
-with open('log_conf.yml', 'r') as f:
+import os
+
+if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+    print("In Test Environment")
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
+else:
+    print("In Dev Environment")
+    app_conf_file = "app_conf.yml"
+    log_conf_file = "log_conf.yml"
+# External Application Configuration
+with open(app_conf_file, 'r') as f:
+    app_config = yaml.safe_load(f.read())
+# External Logging Configuration
+with open(log_conf_file, 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
+
 logger = logging.getLogger('basicLogger')
 
-# audit app_conf
-with open('app_conf.yml', 'r') as config_file:
-    app_config = yaml.safe_load(config_file)
+logger.info("App Conf File: %s" % app_conf_file)
+logger.info("Log Conf File: %s" % log_conf_file)
+
 
 def get_media_upload(index):
     """ Get Upload data in History """
@@ -32,7 +46,7 @@ def get_media_upload(index):
         for msg in consumer:
             msg_str = msg.value.decode('utf-8')
             msg = json.loads(msg_str)
-            if msg.get("type") == "mediaupload":
+            if msg.get("type") == "mediaupload": # acts as a filter for only media uploads
                 if counter == index:  # Check if the current message is at the desired index
                     return msg, 200  # Return the found message
                 counter += 1  # Increment the counter for each media upload message
