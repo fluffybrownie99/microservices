@@ -1,7 +1,7 @@
 import sqlite3
 
-def create_database():
-    conn = sqlite3.connect('stats.sqlite')
+def create_database(path):
+    conn = sqlite3.connect(path)
     
     c = conn.cursor()
     c.execute(
