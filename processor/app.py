@@ -8,6 +8,7 @@ from base import Base
 from server_stats import ServerStats
 from starlette.middleware.cors import CORSMiddleware
 from flask_cors import CORS
+from create_database import create_database
 
 if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")
@@ -31,11 +32,14 @@ logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
 
 
+# Check if the SQLite file exists
+if not os.path.exists(app_config['datastore']['filename']):
+    create_database(app_config['datastore']['filename'])
+
 # connecting to sqlite db
 DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
-
 # GET Handler
 def get_stats():
     logger.info("Request for statistics has started")
