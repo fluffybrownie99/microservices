@@ -1,4 +1,4 @@
-import connexion, datetime, json, yaml, logging, logging.config, requests, pytz, sqlite3
+import connexion, datetime, json, yaml, logging, logging.config, requests, pytz, sqlite3, os
 from connexion import NoContent
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
@@ -9,18 +9,26 @@ from server_stats import ServerStats
 from starlette.middleware.cors import CORSMiddleware
 from flask_cors import CORS
 
-#loading log conf
-with open('log_conf.yaml', 'r') as f:
+if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+    print("In Test Environment")
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
+else:
+    print("In Dev Environment")
+    app_conf_file = "app_conf.yml"
+    log_conf_file = "log_conf.yml"
+# External Application Configuration
+with open(app_conf_file, 'r') as f:
+    app_config = yaml.safe_load(f.read())
+# External Logging Configuration
+with open(log_conf_file, 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
-    
+
 logger = logging.getLogger('basicLogger')
 
-
-#Receiver DB Setup for credentials (Load info from app_conf.yml, add as dict, access values)
-# Loading in yaml files
-with open('app_conf.yaml', 'r') as f:
-    app_config = yaml.safe_load(f.read())
+logger.info("App Conf File: %s" % app_conf_file)
+logger.info("Log Conf File: %s" % log_conf_file)
 
 
 # connecting to sqlite db
