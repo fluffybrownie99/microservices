@@ -1,25 +1,53 @@
 from connexion import NoContent
 from update_event_data import update_event_data
 from pykafka import KafkaClient
-import connexion, requests, yaml, logging, logging.config, datetime, json, uuid, time
-#Log loader
-with open('log_conf.yml', 'r') as f:
-    log_config = yaml.safe_load(f.read())
-    logging.config.dictConfig(log_config)
-logger = logging.getLogger('basicLogger')
+import connexion, requests, yaml, logging, logging.config, datetime, json, uuid, time, os
 
-# URLs from YAML
-with open('app_conf.yml', 'r') as f:
+if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+    print("In Test Environment")
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
+else:
+    print("In Dev Environment")
+    app_conf_file = "app_conf.yml"
+    log_conf_file = "log_conf.yml"
+
+# External Application Configuration
+with open(app_conf_file, 'r') as f:
     app_config = yaml.safe_load(f.read())
     log_upload = app_config.get('eventstore1', {}).get('url')
     log_playback = app_config.get('eventstore2', {}).get('url')
+
+
+# External Logging Configuration
+with open(log_conf_file, 'r') as f:
+    log_config = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_config)
+
+logger = logging.getLogger('basicLogger')
+
+logger.info("App Conf File: %s" % app_conf_file)
+logger.info("Log Conf File: %s" % log_conf_file)
+
+
+
+
+# #Log loader
+# with open('log_conf.yml', 'r') as f:
+#     log_config = yaml.safe_load(f.read())
+#     logging.config.dictConfig(log_config)
+# logger = logging.getLogger('basicLogger')
+
+# URLs from YAML
+# with open('app_conf.yml', 'r') as f:
+#     app_config = yaml.safe_load(f.read())
+#     log_upload = app_config.get('eventstore1', {}).get('url')
+#     log_playback = app_config.get('eventstore2', {}).get('url')
     
 
 # # Kafka stuff
 # kafka_producer = None
-
 def initialize_kafka_producer():
-    global kafka_producer
     kafka_config = app_config['events']
     retry_count = 0
     max_retries = kafka_config['max_retries']
@@ -46,7 +74,7 @@ client, topic, kafka_producer = initialize_kafka_producer()
 
 def media_upload(body):
     # update_event_data("media_upload",body)
-    # global kafka_producer
+
     if kafka_producer is None:
         logger.error("Kafka producer is not initialized.")
     # Handle the error appropriately, possibly by returning an error response
@@ -115,5 +143,5 @@ app.add_api("openapi.yaml",
 
 
 if __name__ == "__main__":
-    client, topic, kafka_producer = initialize_kafka_producer()
+    # client, topic, kafka_producer = initialize_kafka_producer()
     app.run(port=8080)

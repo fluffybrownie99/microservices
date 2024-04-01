@@ -1,4 +1,4 @@
-import connexion, datetime, json, yaml, logging, logging.config, time
+import connexion, datetime, json, yaml, logging, logging.config, time, os
 from connexion import NoContent
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -10,23 +10,38 @@ from operator import and_
 from pykafka import KafkaClient
 from pykafka.common import OffsetType 
 from threading import Thread
-#loading log conf
-with open('log_conf.yml', 'r') as f:
+
+import os
+
+if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+    print("In Test Environment")
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
+else:
+    print("In Dev Environment")
+    app_conf_file = "app_conf.yml"
+    log_conf_file = "log_conf.yml"
+# External Application Configuration
+with open(app_conf_file, 'r') as f:
+    app_config = yaml.safe_load(f.read())
+# External Logging Configuration
+with open(log_conf_file, 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
-    
+
 logger = logging.getLogger('basicLogger')
 
+logger.info("App Conf File: %s" % app_conf_file)
+logger.info("Log Conf File: %s" % log_conf_file)
 
-#Receiver DB Setup for credentials (Load info from app_conf.yml, add as dict, access values)
-with open('app_conf.yml', 'r') as config_file:
-    app_config = yaml.safe_load(config_file)
+
 db_config = app_config['datastore']
 db_user = db_config['user']
 db_password = db_config['password']
 db_hostname = db_config['hostname']
 db_port = db_config.get('port', 3306)  # Provide a default port if not specified
 db_name = db_config['db']
+
 
 # Kafka configuration for retry logic
 kafka_config = app_config['kafka']
