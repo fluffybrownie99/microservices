@@ -1,7 +1,7 @@
-const STATS_API_URL = "http://acit3855audit.westus3.cloudapp.azure.com:8100/home/media/stats"
+const STATS_API_URL = "http://acit3855audit.westus3.cloudapp.azure.com/processing/home/media/stats"
 const EVENTS_URL = {
-    mediaupload: "http://acit3855audit.westus3.cloudapp.azure.com:8110/home/media/upload",
-    mediaplayback: "http://acit3855audit.westus3.cloudapp.azure.com:8110/home/media/playback"
+    mediaupload: "http://acit3855audit.westus3.cloudapp.azure.com/audit_log/home/media/upload",
+    mediaplayback: "http://acit3855audit.westus3.cloudapp.azure.com/audit_log/home/media/playback"
 }
 
 // This function fetches and updates the general statistics

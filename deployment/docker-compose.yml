@@ -52,7 +52,9 @@ services:
   receiver:
     image: receiver:latest
     ports:
-      - '8080:8080'
+      - '8080'
+    networks:
+      - 'api.network'
     expose:
       - '8080'
     environment:
@@ -65,7 +67,9 @@ services:
   storage:
     image: storage:latest
     ports:
-      - "8090:8090"
+      - "8090"
+    networks:
+      - 'api.network'
     environment:
       - TARGET_ENV=test
     volumes:
@@ -76,9 +80,10 @@ services:
       - db
   processor:
     image: processing:latest
-    network_mode: "host"
     ports:
-      - "8100:8100"
+      - "8100"
+    networks:
+      - 'api.network'
     environment:
       - TARGET_ENV=test
     volumes:
@@ -90,7 +95,9 @@ services:
   audit_log:
     image: audit_log:latest
     ports:
-      - "8110:8110"
+      - "8110"
+    networks:
+      - 'api.network'
     environment:
       - TARGET_ENV=test
     volumes:
@@ -102,7 +109,13 @@ services:
     image: dashboard:latest
     ports:
     - "80:80"
+    networks:
+    - 'api.network'
+    volumes:
+    - /home/azureuser/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
+    - "receiver"
+    - "storage"
     - "processor"
     - "audit_log"
   
@@ -110,3 +123,6 @@ services:
 volumes:
   my-db:
   processing-db:
+
+networks:
+  api.network:

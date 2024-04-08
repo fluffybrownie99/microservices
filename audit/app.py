@@ -5,6 +5,10 @@ from flask_cors import CORS
 
 import os
 
+if "TARGET_ENV" not in os.environ or os.environ["TARGET_ENV"] != "test":
+    CORS(app.app)
+    app.app.config['CORS_HEADERS'] = 'Content-Type'
+
 if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")
     app_conf_file = "/config/app_conf.yml"
@@ -91,9 +95,10 @@ def get_media_playback(index):
 app = connexion.FlaskApp(__name__, specification_dir='')
 #specification_dir is where to look for OpenAPI specifications. Empty string means
 #look in the current directory
-CORS(app.app)
-app.app.config['CORS_HEADERS'] = 'Content-Type'
+# CORS(app.app)
+# app.app.config['CORS_HEADERS'] = 'Content-Type'
 app.add_api("openapi.yml",
+            base_path="/audit_log",
             strict_validation=True,
             validate_responses=True)
             

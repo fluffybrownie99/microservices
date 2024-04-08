@@ -184,6 +184,7 @@ app = connexion.FlaskApp(__name__, specification_dir='')
 #specification_dir is where to look for OpenAPI specifications. Empty string means
 #look in the current directory
 app.add_api("openapi.yaml",
+            base_path="/storage",
             strict_validation=True,
             validate_responses=True)
 
