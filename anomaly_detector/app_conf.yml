@@ -1,0 +1,20 @@
+version: 1
+
+datastore:
+  filename: stats.sqlite
+
+events:
+  hostname: acit3855audit.westus3.cloudapp.azure.com
+  port: 9092
+  topic: events
+
+kafka:
+  max_retries: 10
+  retry_sleep_duration: 100
+
+threshold:
+  filesize: 1000000
+  id_limit: 1000
+
+scheduler:
+  period_sec: 5

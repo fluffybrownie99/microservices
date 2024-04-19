@@ -105,6 +105,22 @@ services:
       - /home/azureuser/logs:/logs
     depends_on:
       - kafka
+  anomaly_detector:
+    image: anomaly_detector:latest
+    ports:
+      - "8111"
+    networks:
+      - 'api.network'
+    environment:
+      - TARGET_ENV=test
+    volumes:
+      - /home/azureuser/config/anomaly_detector:/config
+      - /home/azureuser/logs:/logs
+      - anomaly-db:/data
+    depends_on:
+      - kafka
+      - receiver
+
   dashboard:
     image: dashboard:latest
     ports:
@@ -118,11 +134,13 @@ services:
     - "storage"
     - "processor"
     - "audit_log"
+    - "anomaly_detector"
   
 # Names our volume
 volumes:
   my-db:
   processing-db:
+  anomaly-db:
 
 networks:
   api.network:
